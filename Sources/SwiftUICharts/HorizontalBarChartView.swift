@@ -15,6 +15,7 @@ public struct HorizontalBarChartView: View {
 	let text: ((_ bar: DataPoint) -> Text)?
 	let maxValue: Double
     let isDecimal: Bool
+    let separator: String
 	
 	@ScaledMetric private var barHeight: CGFloat = 17
 	@ScaledMetric private var circleSize: CGFloat = 8
@@ -28,12 +29,13 @@ public struct HorizontalBarChartView: View {
 		- maxValue: The max value for calculating the bar width. Default is max value from the dataPoints.
 		- text: The text to be shown next to the bar. Default is: bar.legend.label + ", " + bar.label
      */
-    public init(dataPoints: [DataPoint], barMaxWidth: CGFloat = 100, maxValue: Double? = nil, isDecimal: Bool = true, text: ((_ bar: DataPoint) -> Text)? = nil) {
+    public init(dataPoints: [DataPoint], barMaxWidth: CGFloat = 100, maxValue: Double? = nil, isDecimal: Bool = true, separator: String = ",", text: ((_ bar: DataPoint) -> Text)? = nil) {
         self.dataPoints = dataPoints
         self.barMaxWidth = barMaxWidth
 		self.text = text
 		self.maxValue = max(maxValue ?? 1, dataPoints.max()?.value ?? 1)
         self.isDecimal = isDecimal
+        self.separator = separator
     }
 
     public var body: some View {
@@ -53,7 +55,7 @@ public struct HorizontalBarChartView: View {
 							if let text = text?(bar) {
 								text
 							} else {
-								Text(bar.legend.label) + Text(", ") + Text(bar.label)
+								Text(bar.legend.label) + Text("\(separator) ") + Text(bar.label)
 							}
 						}
 						.frame(maxWidth: .infinity, alignment: .leading)
@@ -73,9 +75,9 @@ public struct HorizontalBarChartView: View {
 						if let text = text?(bar) {
 							text
                         } else if isDecimal {
-                            Text(bar.legend.label) + Text(", ") + Text(bar.label)
+                            Text(bar.legend.label) + Text("\(separator) ") + Text(bar.label).bold()
                         } else {
-                            Text(bar.legend.label) + Text(", ") + Text("\(Int(bar.value))")
+                            Text(bar.legend.label) + Text("\(separator) ") + Text("\(Int(bar.value))").bold()
 						}
 					}
 					.frame(maxWidth: .infinity, alignment: .leading)
