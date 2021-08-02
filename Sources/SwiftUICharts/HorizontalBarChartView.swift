@@ -14,6 +14,7 @@ public struct HorizontalBarChartView: View {
     let barMaxWidth: CGFloat
 	let text: ((_ bar: DataPoint) -> Text)?
 	let maxValue: Double
+    let isDecimal: Bool
 	
 	@ScaledMetric private var barHeight: CGFloat = 17
 	@ScaledMetric private var circleSize: CGFloat = 8
@@ -27,11 +28,12 @@ public struct HorizontalBarChartView: View {
 		- maxValue: The max value for calculating the bar width. Default is max value from the dataPoints.
 		- text: The text to be shown next to the bar. Default is: bar.legend.label + ", " + bar.label
      */
-	public init(dataPoints: [DataPoint], barMaxWidth: CGFloat = 100, maxValue: Double? = nil, text: ((_ bar: DataPoint) -> Text)? = nil) {
+    public init(dataPoints: [DataPoint], barMaxWidth: CGFloat = 100, maxValue: Double? = nil, isDecimal: Bool = true, text: ((_ bar: DataPoint) -> Text)? = nil) {
         self.dataPoints = dataPoints
         self.barMaxWidth = barMaxWidth
 		self.text = text
 		self.maxValue = max(maxValue ?? 1, dataPoints.max()?.value ?? 1)
+        self.isDecimal = isDecimal
     }
 
     public var body: some View {
@@ -70,8 +72,10 @@ public struct HorizontalBarChartView: View {
 					Group {
 						if let text = text?(bar) {
 							text
-						} else {
-							Text(bar.legend.label) + Text(", ") + Text(bar.label)
+                        } else if isDecimal {
+                            Text(bar.legend.label) + Text(", ") + Text(bar.label)
+                        } else {
+                            Text(bar.legend.label) + Text(", ") + Text("\(Int(bar.value))")
 						}
 					}
 					.frame(maxWidth: .infinity, alignment: .leading)
