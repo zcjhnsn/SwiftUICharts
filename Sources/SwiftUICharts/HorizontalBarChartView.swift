@@ -40,12 +40,14 @@ public struct HorizontalBarChartView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ForEach(dataPoints, id: \.self) { bar in
+            ForEach(Array(zip(dataPoints.indices, dataPoints)), id: \.0) { index, bar in
                 #if os(watchOS)
                 VStack(alignment: .leading) {
 					Capsule()
                         .foregroundColor(bar.legend.color)
                         .frame(width: CGFloat(bar.value / maxValue) * barMaxWidth, height: barHeight)
+                        .transition(.slide)
+                        .animation()
                     HStack {
                         Circle()
                             .foregroundColor(bar.legend.color)
@@ -105,5 +107,13 @@ struct HorizontalBarChart_Previews: PreviewProvider {
         ]
 
         return HorizontalBarChartView(dataPoints: dataPoints)
+    }
+}
+
+extension Animation {
+    static func ripple(index: Int) -> Animation {
+        Animation.spring(dampingFraction: 0.5)
+            .speed(2)
+            .delay(0.03 * Double(index))
     }
 }
