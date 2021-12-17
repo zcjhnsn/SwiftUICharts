@@ -84,6 +84,7 @@ public struct HorizontalBarChartView: View {
 					}
 					.frame(maxWidth: .infinity, alignment: .leading)
                 }
+		.animation(.easeInOut)
                 #endif
             }
         }
